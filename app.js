@@ -471,11 +471,13 @@ async function loadAlertStatus() {
     }
 
     const data = await response.json();
-    const regions = Array.isArray(data.regions) ? data.regions : [];
-
+    const regions = Array.isArray(data.raions)
+      ? data.raions
+      : Array.isArray(data.regions)
+        ? data.regions
+        : [];
     const isAlertActive = regions.some((region) => {
       const key = String(region.key || "").toLowerCase().trim();
-
       return key === "бориспільський";
     });
 

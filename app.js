@@ -545,4 +545,61 @@ function showNotification(title, body) {
   }
 }
 
-/* ---------- День / Тиж
+/* ---------- День / Тиждень ---------- */
+
+function setupViewButtons() {
+  document.querySelectorAll(".view-button").forEach((button) => {
+    button.addEventListener("click", () => {
+      const view = button.dataset.view;
+
+      document.querySelectorAll(".view-button").forEach((item) => {
+        item.classList.toggle("active", item.dataset.view === view);
+      });
+
+      document
+        .getElementById("dayView")
+        .classList.toggle("hidden", view !== "day");
+
+      document
+        .getElementById("weekView")
+        .classList.toggle("hidden", view !== "week");
+    });
+  });
+}
+
+/* ---------- PWA ---------- */
+
+function registerServiceWorker() {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch((error) => {
+      console.warn("Service Worker не зареєстрований:", error);
+    });
+  }
+}
+
+/* ---------- Запуск застосунку ---------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderDayButtons();
+  renderDaySchedule();
+  renderWeekSchedule();
+  setupViewButtons();
+
+  updateTimer();
+  loadAlertStatus();
+  registerServiceWorker();
+
+  document
+    .getElementById("refreshAlertButton")
+    .addEventListener("click", loadAlertStatus);
+
+  document
+    .getElementById("notificationButton")
+    .addEventListener("click", enableNotifications);
+
+  /* Таймер оновлюється щосекунди */
+  setInterval(updateTimer, 1000);
+
+  /* Дані NEPTUN оновлюються раз на хвилину */
+  setInterval(loadAlertStatus, 60 * 1000);
+});

@@ -96,6 +96,37 @@ const REGULAR_TIMES = [
 ];
 
 const state = {
+  const ZOOM_LINKS = {
+  english: {
+    url: "https://us04web.zoom.us/j/5187222893?pwd=S0VKMURxbGlnUGJveVNYVndtM3ErUT09",
+    id: "518 722 2893",
+    passcode: "12345",
+  },
+
+  pe: {
+    url: "https://us04web.zoom.us/j/75073841959?pwd=VgHN4EPVKmilnAKa9EpR7ebbEfy69g.1",
+    id: "750 7384 1959",
+    passcode: "7MEgJW",
+  },
+
+  general: {
+    url: "https://us05web.zoom.us/j/81980314443?pwd=NHBKN2pabWxWV284ZXlKVnFyN1Bzdz09",
+    id: "819 8031 4443",
+    passcode: "E0T9RG",
+  },
+};
+
+function getZoomForSubject(subject) {
+  if (subject === "Англ. мова") {
+    return ZOOM_LINKS.english;
+  }
+
+  if (subject === "Фізкультура") {
+    return ZOOM_LINKS.pe;
+  }
+
+  return ZOOM_LINKS.general;
+}
   selectedDay: getWeekDayInKyiv(),
   currentAlert: null,
 };
@@ -166,6 +197,7 @@ function getLessons(day) {
     subject,
     start: times[index].start,
     end: times[index].end,
+    zoom: getZoomForSubject(subject),
   }));
 }
 
@@ -332,9 +364,21 @@ function renderDaySchedule() {
           <p class="lesson-time">${lesson.start}–${lesson.end}</p>
         </div>
 
-        <div class="now-label">
-          ${lesson.number === currentLessonNumber ? "Зараз" : ""}
-        </div>
+<div class="lesson-actions">
+  <a
+    class="zoom-button"
+    href="${lesson.zoom.url}"
+    target="_blank"
+    rel="noopener noreferrer"
+    title="Відкрити Zoom"
+  >
+    Zoom
+  </a>
+
+  <div class="now-label">
+    ${lesson.number === currentLessonNumber ? "Зараз" : ""}
+  </div>
+</div>
       </article>
     `)
     .join("");
@@ -357,7 +401,15 @@ function renderWeekSchedule() {
                 <span>${lesson.number}.</span>
                 <div>
                   <b>${lesson.subject}</b><br>
-                  <small>${lesson.start}–${lesson.end}</small>
+                  <small>${lesson.start}–${lesson.end}</small><br>
+<a
+  class="zoom-week-link"
+  href="${lesson.zoom.url}"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  Відкрити Zoom
+</a>
                 </div>
               </li>
             `).join("")}

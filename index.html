@@ -1,1 +1,107 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
 
+  <title>Розклад 4-А</title>
+
+  <meta name="theme-color" content="#1f5fe0" />
+  <meta
+    name="description"
+    content="Розклад 4-А: уроки, перерви, таймер та повітряні тривоги."
+  />
+
+  <!-- Підтримка встановлення на iPhone -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Розклад 4-А" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <main class="app">
+    <header class="header">
+      <div>
+        <p class="class-name">4-А клас</p>
+        <h1>Розклад уроків</h1>
+      </div>
+
+      <button id="notificationButton" class="bell-button" title="Увімкнути сповіщення">
+        🔔
+      </button>
+    </header>
+
+    <!-- Статус тривоги -->
+    <section id="alertCard" class="alert-card loading">
+      <div id="alertIcon" class="alert-icon">◌</div>
+
+      <div class="alert-content">
+        <strong id="alertTitle">Перевіряємо тривоги…</strong>
+        <p id="alertDescription">
+          Бориспільський район, Київська область
+        </p>
+      </div>
+
+      <button id="refreshAlertButton" class="refresh-button" title="Оновити">
+        ↻
+      </button>
+    </section>
+
+    <!-- Таймер -->
+    <section class="timer-card">
+      <p id="timerTitle" class="timer-title">Завантаження…</p>
+
+      <div id="timer" class="timer">--:--</div>
+
+      <div class="progress-background">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+
+      <p id="timerDescription" class="timer-description"></p>
+
+      <div class="next-event">
+        <span>Далі</span>
+        <strong id="nextEvent">—</strong>
+      </div>
+    </section>
+
+    <!-- Дні -->
+    <nav id="dayButtons" class="day-buttons"></nav>
+
+    <!-- День / Тиждень -->
+    <div class="view-switch">
+      <button class="view-button active" data-view="day">День</button>
+      <button class="view-button" data-view="week">Тиждень</button>
+    </div>
+
+    <!-- Розклад на день -->
+    <section id="dayView">
+      <h2 id="dayTitle">Понеділок</h2>
+      <p id="dayInfo" class="day-info"></p>
+
+      <div id="scheduleList" class="schedule-list"></div>
+    </section>
+
+    <!-- Розклад на тиждень -->
+    <section id="weekView" class="hidden">
+      <div id="weekSchedule" class="week-schedule"></div>
+    </section>
+
+    <footer>
+      <p>
+        ⚠️ Дані про тривоги: <b>Карта повітряних тривог — NEPTUN</b>.
+        NEPTUN — інформаційний агрегатор. Обов’язково перевіряйте офіційні
+        джерела та виконуйте вказівки школи.
+      </p>
+    </footer>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

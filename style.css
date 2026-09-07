@@ -406,3 +406,58 @@ footer p {
   font-weight: 800;
   text-decoration: none;
 }
+/* ---------- Футбольний фон ---------- */
+
+body {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before,
+body::after {
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.09;
+  content: "⚽";
+  font-size: 210px;
+  filter: grayscale(100%);
+}
+
+body::before {
+  top: 90px;
+  left: -65px;
+  transform: rotate(-18deg);
+}
+
+body::after {
+  right: -60px;
+  bottom: 30px;
+  transform: rotate(22deg);
+}
+
+.app {
+  position: relative;
+}
+
+/* Ледь помітні смуги футбольного поля */
+.app::before {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -2;
+  pointer-events: none;
+  content: "";
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(30, 95, 224, 0.025) 0,
+      rgba(30, 95, 224, 0.025) 72px,
+      rgba(255, 255, 255, 0.1) 72px,
+      rgba(255, 255, 255, 0.1) 144px
+    );
+}

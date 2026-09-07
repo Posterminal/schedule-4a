@@ -417,9 +417,9 @@ async function loadAlertStatus() {
         );
       }
     } else {
-      title.textContent = "Відбою немає — уроки за розкладом";
+      title.textContent = "Тривоги немає — уроки за розкладом";
       description.textContent =
-        "Бориспільський район, Київська область";
+        "Бориспільський район, Київська область · уроки за розкладом";
 
       if (state.currentAlert === true) {
         showNotification(

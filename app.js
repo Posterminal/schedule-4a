@@ -455,13 +455,16 @@ async function loadAlertStatus() {
   const description = document.getElementById("alertDescription");
 
   try {
-    const response = await fetch(`${NEPTUN_API_URL}?updated=${Date.now()}`, {
-      method: "GET",
-      cache: "no-store",
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    const response = await fetch(
+      `${NEPTUN_API_URL}?updated=${Date.now()}`,
+      {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`NEPTUN повернув помилку ${response.status}`);
@@ -471,15 +474,9 @@ async function loadAlertStatus() {
     const regions = Array.isArray(data.regions) ? data.regions : [];
 
     const isAlertActive = regions.some((region) => {
-      const key = String(region.key || "").toLowerCase();
-      const name = String(region.name || "").toLowerCase();
-      const oblast = String(region.oblast || "").toLowerCase();
+      const key = String(region.key || "").toLowerCase().trim();
 
-      return (
-        key === ALERT_REGION_KEY ||
-        (name === ALERT_REGION_NAME.toLowerCase() &&
-          oblast === ALERT_OBLAST.toLowerCase())
-      );
+      return key === "бориспільський";
     });
 
     card.className = `alert-card ${isAlertActive ? "danger" : "safe"}`;

@@ -455,7 +455,7 @@ async function loadAlertStatus() {
   const description = document.getElementById("alertDescription");
 
   try {
-    const response = await fetch(NEPTUN_API_URL, {
+    const response = await fetch(`${NEPTUN_API_URL}?updated=${Date.now()}`, {
       method: "GET",
       cache: "no-store",
       headers: {

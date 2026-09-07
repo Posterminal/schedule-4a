@@ -1,1 +1,10 @@
-
+{
+  "name": "Розклад 4-А",
+  "short_name": "Розклад 4-А",
+  "description": "Розклад уроків, таймер та тривоги Бориспільського району.",
+  "lang": "uk",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fc",
+  "theme_color": "#1f5fe0"
+}

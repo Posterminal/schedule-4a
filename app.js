@@ -3,7 +3,6 @@
 /* ---------- Налаштування тривог NEPTUN ---------- */
 
 const NEPTUN_API_URL = "https://neptun.in.ua/api/v1/alerts";
-
 const ALERT_REGION_KEY = "бориспільський";
 const ALERT_REGION_NAME = "Бориспільський район";
 const ALERT_OBLAST = "Київська область";
@@ -69,10 +68,9 @@ const SUBJECTS = {
   ],
 };
 
-/*
-  ПОНЕДІЛОК:
-  1 урок починається о 12:00.
-*/
+/* ---------- Години уроків ---------- */
+
+/* Понеділок: перший урок о 12:00 */
 const MONDAY_TIMES = [
   { start: "12:00", end: "12:35" },
   { start: "12:50", end: "13:25" },
@@ -82,10 +80,7 @@ const MONDAY_TIMES = [
   { start: "15:35", end: "16:10" },
 ];
 
-/*
-  ВІВТОРОК — П’ЯТНИЦЯ:
-  за розкладом дзвінків II зміни.
-*/
+/* Вівторок–п’ятниця: перший урок о 12:50 */
 const REGULAR_TIMES = [
   { start: "12:50", end: "13:25" },
   { start: "13:40", end: "14:15" },
@@ -95,8 +90,9 @@ const REGULAR_TIMES = [
   { start: "16:25", end: "17:00" },
 ];
 
-const state = {
-  const ZOOM_LINKS = {
+/* ---------- Zoom ---------- */
+
+const ZOOM_LINKS = {
   english: {
     url: "https://us04web.zoom.us/j/5187222893?pwd=S0VKMURxbGlnUGJveVNYVndtM3ErUT09",
     id: "518 722 2893",
@@ -127,7 +123,11 @@ function getZoomForSubject(subject) {
 
   return ZOOM_LINKS.general;
 }
-  selectedDay: getWeekDayInKyiv(),
+
+/* ---------- Стан застосунку ---------- */
+
+const state = {
+  selectedDay: 1,
   currentAlert: null,
 };
 
@@ -165,7 +165,12 @@ function getKyivTime() {
 
 function getWeekDayInKyiv() {
   const weekday = getKyivTime().weekday;
-  return weekday >= 1 && weekday <= 5 ? weekday : 1;
+
+  if (weekday >= 1 && weekday <= 5) {
+    return weekday;
+  }
+
+  return 1;
 }
 
 function timeToMinutes(time) {
@@ -183,7 +188,7 @@ function formatSeconds(seconds) {
   return [
     String(hours).padStart(2, "0"),
     String(minutes).padStart(2, "0"),
-    String(restSeconds).padStart(2, "0")
+    String(restSeconds).padStart(2, "0"),
   ].join(":");
 }
 
@@ -209,9 +214,10 @@ function getActiveSchoolEvent() {
   }
 
   const lessons = getLessons(kyiv.weekday);
-  const nowInSeconds = (kyiv.hour * 3600) + (kyiv.minute * 60) + kyiv.second;
+  const nowInSeconds =
+    kyiv.hour * 3600 + kyiv.minute * 60 + kyiv.second;
 
-  for (let index = 0; index < lessons.length; index++) {
+  for (let index = 0; index < lessons.length; index += 1) {
     const lesson = lessons[index];
     const start = timeToMinutes(lesson.start) * 60;
     const end = timeToMinutes(lesson.end) * 60;
@@ -255,6 +261,8 @@ function getActiveSchoolEvent() {
   return { type: "after" };
 }
 
+/* ---------- Таймер ---------- */
+
 function updateTimer() {
   const timerTitle = document.getElementById("timerTitle");
   const timer = document.getElementById("timer");
@@ -286,8 +294,7 @@ function updateTimer() {
   if (event.type === "before") {
     timerTitle.textContent = "До початку уроків";
     timer.textContent = formatSeconds(event.secondsLeft);
-    description.textContent =
-      `Перший урок: ${event.lesson.subject}`;
+    description.textContent = `Перший урок: ${event.lesson.subject}`;
     nextEvent.textContent =
       `${event.lesson.number}. ${event.lesson.subject} · ${event.lesson.start}`;
     progressBar.style.width = "0%";
@@ -312,18 +319,24 @@ function updateTimer() {
   renderDaySchedule();
 }
 
+/* ---------- Вибір дня ---------- */
+
 function renderDayButtons() {
   const container = document.getElementById("dayButtons");
 
   container.innerHTML = Object.entries(DAYS)
-    .map(([number, name]) => `
-      <button
-        class="day-button ${Number(number) === state.selectedDay ? "active" : ""}"
-        data-day="${number}"
-      >
-        ${SHORT_DAYS[number]}
-      </button>
-    `)
+    .map(
+      ([number]) => `
+        <button
+          class="day-button ${
+            Number(number) === state.selectedDay ? "active" : ""
+          }"
+          data-day="${number}"
+        >
+          ${SHORT_DAYS[number]}
+        </button>
+      `
+    )
     .join("");
 
   container.querySelectorAll(".day-button").forEach((button) => {
@@ -335,6 +348,8 @@ function renderDayButtons() {
   });
 }
 
+/* ---------- Розклад на день ---------- */
+
 function renderDaySchedule() {
   const day = state.selectedDay;
   const lessons = getLessons(day);
@@ -342,6 +357,7 @@ function renderDaySchedule() {
   const currentEvent = getActiveSchoolEvent();
 
   document.getElementById("dayTitle").textContent = DAYS[day];
+
   document.getElementById("dayInfo").textContent =
     day === 1
       ? "Початок уроків о 12:00"
@@ -353,36 +369,40 @@ function renderDaySchedule() {
       : null;
 
   document.getElementById("scheduleList").innerHTML = lessons
-    .map((lesson) => `
-      <article class="schedule-item ${
-        lesson.number === currentLessonNumber ? "current" : ""
-      }">
-        <div class="lesson-number">${lesson.number}</div>
+    .map(
+      (lesson) => `
+        <article class="schedule-item ${
+          lesson.number === currentLessonNumber ? "current" : ""
+        }">
+          <div class="lesson-number">${lesson.number}</div>
 
-        <div>
-          <p class="lesson-name">${lesson.subject}</p>
-          <p class="lesson-time">${lesson.start}–${lesson.end}</p>
-        </div>
+          <div>
+            <p class="lesson-name">${lesson.subject}</p>
+            <p class="lesson-time">${lesson.start}–${lesson.end}</p>
+          </div>
 
-<div class="lesson-actions">
-  <a
-    class="zoom-button"
-    href="${lesson.zoom.url}"
-    target="_blank"
-    rel="noopener noreferrer"
-    title="Відкрити Zoom"
-  >
-    Zoom
-  </a>
+          <div class="lesson-actions">
+            <a
+              class="zoom-button"
+              href="${lesson.zoom.url}"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Відкрити Zoom"
+            >
+              Zoom
+            </a>
 
-  <div class="now-label">
-    ${lesson.number === currentLessonNumber ? "Зараз" : ""}
-  </div>
-</div>
-      </article>
-    `)
+            <div class="now-label">
+              ${lesson.number === currentLessonNumber ? "Зараз" : ""}
+            </div>
+          </div>
+        </article>
+      `
+    )
     .join("");
 }
+
+/* ---------- Розклад на тиждень ---------- */
 
 function renderWeekSchedule() {
   const container = document.getElementById("weekSchedule");
@@ -396,23 +416,29 @@ function renderWeekSchedule() {
           <h3>${dayName}</h3>
 
           <ul>
-            ${lessons.map((lesson) => `
-              <li>
-                <span>${lesson.number}.</span>
-                <div>
-                  <b>${lesson.subject}</b><br>
-                  <small>${lesson.start}–${lesson.end}</small><br>
-<a
-  class="zoom-week-link"
-  href="${lesson.zoom.url}"
-  target="_blank"
-  rel="noopener noreferrer"
->
-  Відкрити Zoom
-</a>
-                </div>
-              </li>
-            `).join("")}
+            ${lessons
+              .map(
+                (lesson) => `
+                  <li>
+                    <span>${lesson.number}.</span>
+
+                    <div>
+                      <b>${lesson.subject}</b><br>
+                      <small>${lesson.start}–${lesson.end}</small><br>
+
+                      <a
+                        class="zoom-week-link"
+                        href="${lesson.zoom.url}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Відкрити Zoom
+                      </a>
+                    </div>
+                  </li>
+                `
+              )
+              .join("")}
           </ul>
         </article>
       `;
@@ -445,12 +471,14 @@ async function loadAlertStatus() {
     const regions = Array.isArray(data.regions) ? data.regions : [];
 
     const isAlertActive = regions.some((region) => {
+      const key = String(region.key || "").toLowerCase();
+      const name = String(region.name || "").toLowerCase();
+      const oblast = String(region.oblast || "").toLowerCase();
+
       return (
-        String(region.key || "").toLowerCase() === ALERT_REGION_KEY ||
-        (
-          String(region.name || "").toLowerCase() === ALERT_REGION_NAME.toLowerCase() &&
-          String(region.oblast || "").toLowerCase() === ALERT_OBLAST.toLowerCase()
-        )
+        key === ALERT_REGION_KEY ||
+        (name === ALERT_REGION_NAME.toLowerCase() &&
+          oblast === ALERT_OBLAST.toLowerCase())
       );
     });
 
@@ -469,7 +497,7 @@ async function loadAlertStatus() {
         );
       }
     } else {
-      title.textContent = "Тривоги немає — уроки за розкладом";
+      title.textContent = "Тривоги немає";
       description.textContent =
         "Бориспільський район, Київська область · уроки за розкладом";
 
@@ -517,56 +545,4 @@ function showNotification(title, body) {
   }
 }
 
-/* ---------- День / Тиждень ---------- */
-
-function setupViewButtons() {
-  document.querySelectorAll(".view-button").forEach((button) => {
-    button.addEventListener("click", () => {
-      const view = button.dataset.view;
-
-      document.querySelectorAll(".view-button").forEach((item) => {
-        item.classList.toggle("active", item.dataset.view === view);
-      });
-
-      document.getElementById("dayView").classList.toggle("hidden", view !== "day");
-      document.getElementById("weekView").classList.toggle("hidden", view !== "week");
-    });
-  });
-}
-
-/* ---------- PWA ---------- */
-
-function registerServiceWorker() {
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./sw.js").catch((error) => {
-      console.warn("Service Worker не зареєстрований:", error);
-    });
-  }
-}
-
-/* ---------- Запуск ---------- */
-
-document.addEventListener("DOMContentLoaded", () => {
-  renderDayButtons();
-  renderDaySchedule();
-  renderWeekSchedule();
-  setupViewButtons();
-
-  updateTimer();
-  loadAlertStatus();
-  registerServiceWorker();
-
-  document
-    .getElementById("refreshAlertButton")
-    .addEventListener("click", loadAlertStatus);
-
-  document
-    .getElementById("notificationButton")
-    .addEventListener("click", enableNotifications);
-
-  /* Таймер оновлюється щосекунди */
-  setInterval(updateTimer, 1000);
-
-  /* NEPTUN перевіряється раз на хвилину */
-  setInterval(loadAlertStatus, 60 * 1000);
-});
+/* ---------- День / Тиж
